@@ -1,8 +1,12 @@
 'use strict';
 
-// first function
-function sortList(workers) {
-  workers.sort((a, b) => {
+const list = document.querySelector('ul');
+
+// helper function
+function sorter(listItem) {
+  const workers = Array.from(listItem.querySelectorAll('li'));
+
+  return workers.sort((a, b) => {
     const salaryA = parseInt(
       a.getAttribute('data-salary').replace(/[^0-9]/g, ''),
     );
@@ -12,26 +16,32 @@ function sortList(workers) {
 
     return salaryB - salaryA;
   });
+}
 
-  const list = document.querySelector('ul');
+// first function
+function sortList(listItem) {
+  const sortedArr = sorter(listItem);
 
-  workers.forEach((worker) => list.appendChild(worker));
+  sortedArr.forEach((worker) => listItem.appendChild(worker));
 
-  return workers;
+  return sortedArr;
 }
 
 // second function
-const employees = Array.from(document.querySelectorAll('ul li'));
+function getEmployees(listItem) {
+  const employs = Array.from(listItem.querySelectorAll('li'));
 
-sortList(employees);
-
-function getEmployees(employs) {
   return employs.map((employee) => ({
-    name: employee.textContent.trim(),
-    position: employee.getAttribute('data-position'),
-    salary: employee.getAttribute('data-salary'),
-    age: employee.getAttribute('data-age'),
+    name: Array.from(employee.childNodes)
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent.trim())
+      .filter(Boolean)
+      .join(' '),
+    position: employee.dataset.position,
+    salary: employee.dataset.salary,
+    age: employee.dataset.age,
   }));
 }
 
-getEmployees(employees);
+sortList(list);
+getEmployees(list);
